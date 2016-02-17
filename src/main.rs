@@ -12,8 +12,10 @@ struct FileTree {
 }
 
 fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Result<()> {
+    let name = name.to_string_lossy();
+
     if lasts.len() == 0 {
-        try!(writeln!(output, "{:?}", name));
+        try!(writeln!(output, "{}", name));
     } else {
         for last in &lasts[..lasts.len() - 1] {
             let c = if *last {
@@ -24,9 +26,9 @@ fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Res
             try!(write!(output, "{}   ", c));
         }
         if *lasts.last().unwrap() {
-            try!(writeln!(output, "{} {:?}", LAST_HORIZONTAL_STR, name));
+            try!(writeln!(output, "{} {}", LAST_HORIZONTAL_STR, name));
         } else {
-            try!(writeln!(output, "{} {:?}", HORIZONTAL_STR, name));
+            try!(writeln!(output, "{} {}", HORIZONTAL_STR, name));
         }
     }
     Ok(())
