@@ -17,7 +17,9 @@ struct FileTree {
 }
 
 fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Result<()> {
-    let name = name.to_string_lossy();
+    let name = format!("{:?}", name);
+    // Remove the quotes
+    let name = &name[1..name.len()-1];
 
     if lasts.len() == 0 {
         try!(writeln!(output, "{}", name));
