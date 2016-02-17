@@ -11,6 +11,18 @@ const VERTICAL_CHAR: char = '│';
 const HORIZONTAL_STR: &'static str = "├──";
 const LAST_HORIZONTAL_STR: &'static str = "└──";
 
+const USAGE: &'static str = "
+treeify converts the output of a command that lists files in a tree representation similar to the output of the command tree.
+
+Usage:
+  treeify [-0]
+  treeify (-h | --help)
+
+Options:
+  -h --help  Display this message
+  -0         Paths are separated by null characters instead of new lines
+";
+
 struct FileTree {
     name: OsString,
     childs: Vec<FileTree>,
@@ -95,19 +107,6 @@ fn make_trees<I, O>(input: &mut I) -> io::Result<Vec<FileTree>>
 
     Ok(pseudo_root.childs)
 }
-
-
-const USAGE: &'static str = "
-treeify converts the output of a command that lists files in a tree representation similar to the output of the command tree.
-
-Usage:
-  treeify [-0]
-  treeify (-h | --help)
-
-Options:
-  -h --help  Display this message
-  -0         Paths are separated by null characters instead of new lines
-";
 
 #[derive(Debug, RustcDecodable)]
 struct Args {
