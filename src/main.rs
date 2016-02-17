@@ -1,6 +1,11 @@
+extern crate docopt;
+extern crate rustc_serialize;
+
 use std::ffi::{OsString, OsStr};
 use std::io::{self, BufRead, Write};
 use std::path::Path;
+
+use docopt::Docopt;
 
 const VERTICAL_CHAR: char = '│';
 const HORIZONTAL_STR: &'static str = "├──";
@@ -71,29 +76,61 @@ impl FileTree {
     }
 }
 
-fn make_trees<R: BufRead>(input: &mut R) -> io::Result<Vec<FileTree>> {
+fn make_trees<I, O>(input: &mut I) -> io::Result<Vec<FileTree>>
+    where I: Iterator<Item = O>,
+          O: AsRef<OsStr>
+{
     let mut pseudo_root = FileTree {
         name: OsString::new(),
         childs: vec![],
     };
 
-    for line in input.lines() {
-        let line = try!(line);
-        let path = Path::new(&*line);
+    for line in input {
+        let path = Path::new(&line);
         let mut bar = path.components().map(|c| c.as_os_str());
         pseudo_root.add(&mut bar);
-
     }
 
     Ok(pseudo_root.childs)
 }
 
 
+const USAGE: &'static str = "
+treeify converts the output of a command that lists files in a tree representation similar to the output of the command tree.
+
+Usage:
+  treeify [-0]
+  treeify (-h | --help)
+
+Options:
+  -h --help  Display this message
+  -0         Paths are separated by null characters instead of new lines
+";
+
+#[derive(Debug, RustcDecodable)]
+struct Args {
+    flag_0: bool,
+}
+
 fn main() {
+
+    let args: Args = Docopt::new(USAGE)
+                         .and_then(|d| d.decode())
+                         .unwrap_or_else(|e| e.exit());
     let stdin = io::stdin();
+    let trees = if args.flag_0 {
+        let mut input = stdin.lock()
+                             .split(0)
+                             .map(|l| String::from_utf8_lossy(&*l.unwrap()).into_owned());
+        make_trees(&mut input).unwrap()
+    } else {
+        let mut input = stdin.lock().lines().map(|l| l.unwrap());
+        make_trees(&mut input).unwrap()
+    };
+
     let mut stdout = io::stdout();
     let mut v = Vec::new();
-    for tree in make_trees(&mut stdin.lock()).unwrap() {
+    for tree in trees {
         tree.print(&mut stdout, &mut v).unwrap();
     }
 }
