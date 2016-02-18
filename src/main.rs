@@ -15,8 +15,8 @@ const USAGE: &'static str = "
 treeify converts the output of a command that lists files in a tree representation similar to the output of the command tree.
 
 Usage:
-  treeify [-0]
-  treeify (-h | --help)
+  treeify [-0 | --null]
+  treeify -h | --help
 
 Options:
   -h --help  Display this message
