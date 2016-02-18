@@ -20,7 +20,7 @@ Usage:
 
 Options:
   -h --help  Display this message
-  -0         Paths are separated by null characters instead of new lines
+  -0 --null  Paths are separated by null characters instead of new lines
 ";
 
 struct FileTree {
