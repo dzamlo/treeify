@@ -16,6 +16,11 @@ Simply pipe the output of a command to treeify. For example:
 find ~ -name '*.rs' | treeify
 ```
 
+To prevent issue with filename containing new line characters, you can use the -0 or --null option:
+```bash
+find ~ -name '*.rs' -print0 | treeify --null
+```
+
 ## License
 
 Licensed under either of
