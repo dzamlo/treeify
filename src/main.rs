@@ -12,7 +12,8 @@ const HORIZONTAL_STR: &'static str = "├──";
 const LAST_HORIZONTAL_STR: &'static str = "└──";
 
 const USAGE: &'static str = "
-treeify converts the output of a command that lists files in a tree representation similar to the output of the command tree.
+treeify converts the output of a command that lists files in a tree \
+representation similar to the output of the command tree.
 
 Usage:
   treeify [-0 | --null]
@@ -31,7 +32,7 @@ struct FileTree {
 fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Result<()> {
     let name = format!("{:?}", name);
     // Remove the quotes
-    let name = &name[1..name.len()-1];
+    let name = &name[1..name.len() - 1];
 
     if lasts.len() == 0 {
         try!(writeln!(output, "{}", name));
