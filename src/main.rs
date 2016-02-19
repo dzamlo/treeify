@@ -1,8 +1,10 @@
 extern crate docopt;
 extern crate rustc_serialize;
 
+use std::ascii;
 use std::ffi::{OsString, OsStr};
 use std::io::{self, BufRead, Write};
+use std::os::unix::ffi::OsStrExt;
 use std::path::Path;
 
 use docopt::Docopt;
@@ -30,13 +32,9 @@ struct FileTree {
 }
 
 fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Result<()> {
-    let name = format!("{:?}", name);
-    // Remove the quotes
-    let name = &name[1..name.len() - 1];
+    let name: Vec<u8> = name.as_bytes().iter().flat_map(|c| ascii::escape_default(*c)).collect();
 
-    if lasts.len() == 0 {
-        try!(writeln!(output, "{}", name));
-    } else {
+    if lasts.len() > 0 {
         for last in &lasts[..lasts.len() - 1] {
             let c = if *last {
                 ' '
@@ -46,11 +44,15 @@ fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Res
             try!(write!(output, "{}   ", c));
         }
         if *lasts.last().unwrap() {
-            try!(writeln!(output, "{} {}", LAST_HORIZONTAL_STR, name));
+            try!(write!(output, "{} ", LAST_HORIZONTAL_STR));
         } else {
-            try!(writeln!(output, "{} {}", HORIZONTAL_STR, name));
+            try!(write!(output, "{} ", HORIZONTAL_STR,));
         }
     }
+
+    try!(output.write_all(&*name));
+    try!(output.write_all(b"\n"));
+
     Ok(())
 }
 
