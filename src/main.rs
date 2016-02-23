@@ -10,7 +10,7 @@ use docopt::Docopt;
 const VERTICAL_CHAR: char = '│';
 const HORIZONTAL_STR: &'static str = "├──";
 const LAST_HORIZONTAL_STR: &'static str = "└──";
-const REPLACEMENT_STR: &'static str = "?";
+const REPLACEMENT_CHAR: char = '?';
 
 const USAGE: &'static str = "
 treeify converts the output of a command that lists files in a tree \
@@ -31,7 +31,16 @@ struct FileTree {
 }
 
 fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Result<()> {
-    let name: String = name.to_string_lossy().replace(char::is_control, REPLACEMENT_STR);
+    let name: String = name.to_string_lossy()
+                           .chars()
+                           .map(|c| {
+                               if c.is_control() {
+                                   REPLACEMENT_CHAR
+                               } else {
+                                   '?'
+                               }
+                           })
+                           .collect();
 
     if lasts.len() > 0 {
         for last in &lasts[..lasts.len() - 1] {
