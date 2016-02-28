@@ -37,7 +37,7 @@ fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Res
                                if c.is_control() {
                                    REPLACEMENT_CHAR
                                } else {
-                                   '?'
+                                   c
                                }
                            })
                            .collect();
