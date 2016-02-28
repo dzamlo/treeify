@@ -25,6 +25,7 @@ Options:
   -0 --null  Paths are separated by null characters instead of new lines
 ";
 
+#[derive(Debug,PartialEq,Eq)]
 struct FileTree {
     name: OsString,
     childs: Vec<FileTree>,
@@ -124,7 +125,6 @@ struct Args {
 }
 
 fn main() {
-
     let args: Args = Docopt::new(USAGE)
                          .and_then(|d| d.decode())
                          .unwrap_or_else(|e| e.exit());
@@ -144,4 +144,97 @@ fn main() {
     for tree in trees {
         tree.print(&mut stdout, &mut v).unwrap();
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{FileTree, make_trees};
+    use std::ffi::OsString;
+
+    fn test_single_tree_creation(lines: &[&str], expected_tree: FileTree) {
+        let trees = make_trees(&mut lines.iter()).unwrap();
+        assert_eq!(1, trees.len());
+        assert_eq!(expected_tree, trees[0]);
+    }
+
+    #[test]
+    fn test_tree_creation1() {
+        let lines = ["a", "a/b", "a/b/c/d", "a/b/e"];
+        let e = FileTree {
+            name: OsString::from("e"),
+            childs: vec![],
+        };
+        let d = FileTree {
+            name: OsString::from("d"),
+            childs: vec![],
+        };
+        let c = FileTree {
+            name: OsString::from("c"),
+            childs: vec![d],
+        };
+        let b = FileTree {
+            name: OsString::from("b"),
+            childs: vec![c, e],
+        };
+        let expected_tree = FileTree {
+            name: OsString::from("a"),
+            childs: vec![b],
+        };
+
+        test_single_tree_creation(&lines, expected_tree);
+    }
+
+    #[test]
+    fn test_tree_creation2() {
+        let lines = ["a", "a/b/e", "a/b", "a/b/c/d"];
+        let e = FileTree {
+            name: OsString::from("e"),
+            childs: vec![],
+        };
+        let d = FileTree {
+            name: OsString::from("d"),
+            childs: vec![],
+        };
+        let c = FileTree {
+            name: OsString::from("c"),
+            childs: vec![d],
+        };
+        let b = FileTree {
+            name: OsString::from("b"),
+            childs: vec![e, c],
+        };
+        let expected_tree = FileTree {
+            name: OsString::from("a"),
+            childs: vec![b],
+        };
+
+        test_single_tree_creation(&lines, expected_tree);
+    }
+
+    #[test]
+    fn test_trees_creation() {
+        let lines = ["a", "a/b", "c/d"];
+        let d = FileTree {
+            name: OsString::from("d"),
+            childs: vec![],
+        };
+        let c = FileTree {
+            name: OsString::from("c"),
+            childs: vec![d],
+        };
+        let b = FileTree {
+            name: OsString::from("b"),
+            childs: vec![],
+        };
+        let a = FileTree {
+            name: OsString::from("a"),
+            childs: vec![b],
+        };
+
+        let trees = make_trees(&mut lines.iter()).unwrap();
+        assert_eq!(2, trees.len());
+        assert_eq!(a, trees[0]);
+        assert_eq!(c, trees[1]);
+    }
+
 }
