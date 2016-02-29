@@ -148,8 +148,8 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::{FileTree, make_trees};
-    use std::ffi::OsString;
+    use super::{FileTree, make_trees, print_line};
+    use std::ffi::{OsString, OsStr};
 
     fn test_single_tree_creation(lines: &[&str], expected_tree: FileTree) {
         let trees = make_trees(&mut lines.iter()).unwrap();
@@ -235,6 +235,24 @@ mod tests {
         assert_eq!(2, trees.len());
         assert_eq!(a, trees[0]);
         assert_eq!(c, trees[1]);
+    }
+
+    #[test]
+    fn test_print_line() {
+        let name = OsStr::new("abc\ndef");
+
+        let mut output1 = vec![];
+        print_line(&mut output1, &[], name).unwrap();
+        assert_eq!(b"abc?def\n", &*output1);
+
+        let mut output2 = vec![];
+        print_line(&mut output2, &[true, false, true], name).unwrap();
+        assert_eq!("    │   └── abc?def\n".as_bytes(), &*output2);
+
+        let mut output3 = vec![];
+        print_line(&mut output3, &[true, false, false], name).unwrap();
+        assert_eq!("    │   ├── abc?def\n".as_bytes(), &*output3);
+
     }
 
 }
