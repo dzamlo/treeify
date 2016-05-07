@@ -4,7 +4,12 @@ treeify converts the output of a command that lists files into a tree representa
 
 ## Installation
 
-You can install the latest version using cargo with the following command:
+You can install the latest published version using cargo with the following command:
+```bash
+cargo install treeify
+```
+
+You can also install the latest version from the git repository:
 ```bash
 cargo install --git https://github.com/dzamlo/treeify.git
 ```
