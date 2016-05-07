@@ -1,6 +1,6 @@
 [package]
 name = "treeify"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Loïc Damien <loic.damien@dzamlo.ch>"]
 repository = "https://github.com/dzamlo/treeify"
 license = "MIT OR Apache-2.0"
