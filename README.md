@@ -1,6 +1,6 @@
 # treeify
 
-treeify converts the output of a command that lists files in a tree representation similar to the output of the command tree.
+treeify converts the output of a command that lists files into a tree representation similar to the output of the command tree.
 
 ## Installation
 
