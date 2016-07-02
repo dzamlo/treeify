@@ -1,6 +1,6 @@
 [root]
 name = "treeify"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "clap 2.9.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
