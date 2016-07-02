@@ -4,6 +4,8 @@ treeify converts the output of a command that lists files into a tree representa
 
 ## Installation
 
+If you use Arch Linux, a package is available in the AUR.
+
 You can install the latest published version using cargo with the following command:
 ```bash
 cargo install treeify
@@ -13,6 +15,8 @@ You can also install the latest version from the git repository:
 ```bash
 cargo install --git https://github.com/dzamlo/treeify.git
 ```
+
+A bash completion file is also generated but not installed with `cargo install`. To use it you need to either use the AUR package, or manually build the application yourself.
 
 ## Usage
 
