@@ -87,7 +87,7 @@ impl FileTree {
     }
 }
 
-fn make_trees<I, O>(input: &mut I) -> io::Result<Vec<FileTree>>
+fn make_trees<I, O>(input: &mut I) -> Vec<FileTree>
     where I: Iterator<Item = O>,
           O: AsRef<OsStr>
 {
@@ -98,11 +98,11 @@ fn make_trees<I, O>(input: &mut I) -> io::Result<Vec<FileTree>>
 
     for line in input {
         let path = Path::new(&line);
-        let mut bar = path.components().map(|c| c.as_os_str());
-        pseudo_root.add(&mut bar);
+        let mut components = path.components().map(|c| c.as_os_str());
+        pseudo_root.add(&mut components);
     }
 
-    Ok(pseudo_root.childs)
+    pseudo_root.childs
 }
 
 fn main() {
@@ -112,10 +112,10 @@ fn main() {
         let mut input = stdin.lock()
             .split(0)
             .map(|l| String::from_utf8_lossy(&*l.unwrap()).into_owned());
-        make_trees(&mut input).unwrap()
+        make_trees(&mut input)
     } else {
         let mut input = stdin.lock().lines().map(|l| l.unwrap());
-        make_trees(&mut input).unwrap()
+        make_trees(&mut input)
     };
 
     let mut stdout = io::stdout();
@@ -131,7 +131,7 @@ mod tests {
     use std::ffi::{OsString, OsStr};
 
     fn test_single_tree_creation(lines: &[&str], expected_tree: FileTree) {
-        let trees = make_trees(&mut lines.iter()).unwrap();
+        let trees = make_trees(&mut lines.iter());
         assert_eq!(1, trees.len());
         assert_eq!(expected_tree, trees[0]);
     }
@@ -210,7 +210,7 @@ mod tests {
             childs: vec![b],
         };
 
-        let trees = make_trees(&mut lines.iter()).unwrap();
+        let trees = make_trees(&mut lines.iter());
         assert_eq!(2, trees.len());
         assert_eq!(a, trees[0]);
         assert_eq!(c, trees[1]);
