@@ -6,6 +6,10 @@ repository = "https://github.com/dzamlo/treeify"
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 description = "treeify converts the output of a command that lists files into a tree representation similar to the output of the command tree."
+build = "build.rs"
 
 [dependencies]
-clap = "2.9.1"
+clap = "2.9"
+
+[build-dependencies]
+clap = "2.9"
