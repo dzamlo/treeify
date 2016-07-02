@@ -8,5 +8,4 @@ readme = "README.md"
 description = "treeify converts the output of a command that lists files into a tree representation similar to the output of the command tree."
 
 [dependencies]
-docopt = "0.6"
-rustc-serialize = "0.3"
+clap = "2.9.1"

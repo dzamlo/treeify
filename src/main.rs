@@ -1,29 +1,15 @@
-extern crate docopt;
-extern crate rustc_serialize;
+extern crate clap;
 
 use std::ffi::{OsString, OsStr};
 use std::io::{self, BufRead, Write};
 use std::path::Path;
 
-use docopt::Docopt;
+mod cli;
 
 const VERTICAL_CHAR: char = '│';
 const HORIZONTAL_STR: &'static str = "├──";
 const LAST_HORIZONTAL_STR: &'static str = "└──";
 const REPLACEMENT_CHAR: char = '?';
-
-const USAGE: &'static str = "
-treeify converts the output of a command that lists files in a tree \
-representation similar to the output of the command tree.
-
-Usage:
-  treeify [-0 | --null]
-  treeify -h | --help
-
-Options:
-  -h --help  Display this message
-  -0 --null  Paths are separated by null characters instead of new lines
-";
 
 #[derive(Debug,PartialEq,Eq)]
 struct FileTree {
@@ -119,17 +105,10 @@ fn make_trees<I, O>(input: &mut I) -> io::Result<Vec<FileTree>>
     Ok(pseudo_root.childs)
 }
 
-#[derive(Debug, RustcDecodable)]
-struct Args {
-    flag_0: bool,
-}
-
 fn main() {
-    let args: Args = Docopt::new(USAGE)
-                         .and_then(|d| d.decode())
-                         .unwrap_or_else(|e| e.exit());
+    let matches = cli::build_cli().get_matches();
     let stdin = io::stdin();
-    let trees = if args.flag_0 {
+    let trees = if matches.is_present("null") {
         let mut input = stdin.lock()
                              .split(0)
                              .map(|l| String::from_utf8_lossy(&*l.unwrap()).into_owned());
