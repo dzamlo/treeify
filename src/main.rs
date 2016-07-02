@@ -19,15 +19,15 @@ struct FileTree {
 
 fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Result<()> {
     let name: String = name.to_string_lossy()
-                           .chars()
-                           .map(|c| {
-                               if c.is_control() {
-                                   REPLACEMENT_CHAR
-                               } else {
-                                   c
-                               }
-                           })
-                           .collect();
+        .chars()
+        .map(|c| {
+            if c.is_control() {
+                REPLACEMENT_CHAR
+            } else {
+                c
+            }
+        })
+        .collect();
 
     if lasts.len() > 0 {
         for last in &lasts[..lasts.len() - 1] {
@@ -110,8 +110,8 @@ fn main() {
     let stdin = io::stdin();
     let trees = if matches.is_present("null") {
         let mut input = stdin.lock()
-                             .split(0)
-                             .map(|l| String::from_utf8_lossy(&*l.unwrap()).into_owned());
+            .split(0)
+            .map(|l| String::from_utf8_lossy(&*l.unwrap()).into_owned());
         make_trees(&mut input).unwrap()
     } else {
         let mut input = stdin.lock().lines().map(|l| l.unwrap());
